@@ -35,12 +35,48 @@
             <div id="deviceready" class="blink">
                 <p class="event listening">Conectando</p>
                 <p class="event received">GPS listo</p>
+                <p id="latitud"></p>
+                <p id="longitud"></p>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             app.initialize();
+            // sets up the interval at the specified frequency
+            function setupWatch(freq) {
+                // global var here so it can be cleared on logout (or whenever).
+                activeWatch = setInterval(watchLocation, freq);
+            }
+
+            // this is what gets called on the interval.
+            function watchLocation() {
+                var gcp = navigator.geolocation.getCurrentPosition(
+                        updateUserLoc, onLocationError, {
+                            enableHighAccuracy: true
+                        });
+                // console.log(gcp);
+            }
+
+            // do something with the results
+
+            function updateUserLoc(position) {
+                var location = {
+                   lat : position.coords.latitude,
+                   lng : position.coords.longitude
+                };
+
+                var latitudp = document.geyElementsById("latitud")
+                latitudp.innerHTML(location.lat);
+                var longitudp = document.geyElementsById("longitud")
+                longitudp.innerHTML(location.lng);
+            }
+
+            // stop watching
+
+            function logout() {
+                clearInterval(activeWatch);
+            }
         </script>
     </body>
 </html>
