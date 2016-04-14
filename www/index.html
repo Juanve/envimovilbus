@@ -71,7 +71,13 @@
                 var longitudp = document.getElementById("longitud")
                 longitudp.innerHTML(location.lng);
             }
-
+            
+            // 
+            
+            function onLocationError(e) {
+                alert(e.message);
+                logout();
+            }
             // stop watching
 
             function logout() {
