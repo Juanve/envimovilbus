@@ -29,7 +29,7 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Envimovil GPS</title>
-        <!-- <script src="js/firebase.js"></script> -->
+        <script src="js/firebase.js"></script>
     </head>
     <body>
         <div class="app">
@@ -46,7 +46,7 @@
         <script type="text/javascript">
             app.initialize();
             // Set Firebase
-            //var myFirebaseRef = new Firebase("https://envimovilgps.firebaseio.com/");
+            var myFirebaseRef = new Firebase("https://envimovilgps.firebaseio.com/");
             // sets up the interval at the specified frequency
             function setupWatch(freq) {
                 // global var here so it can be cleared on logout (or whenever).
@@ -74,10 +74,10 @@
                 latitudp.innerHTML = "Latitud: " + location.lat;
                 var longitudp = document.getElementById("longitud")
                 longitudp.innerHTML = "Longitug: " + location.lng;
-                /*myFirebaseRef.update({
+                myFirebaseRef.update({
                   "latitud": location.lat,
                   "longitud": location.lng
-                })*/
+                })
             }
 
             // Cuando hay un error en watchLocation lo muestra y deja de obtener coordenadas
