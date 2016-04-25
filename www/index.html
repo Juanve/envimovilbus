@@ -74,7 +74,7 @@
                 latitudp.innerHTML = "Latitud: " + location.lat;
                 var longitudp = document.getElementById("longitud")
                 longitudp.innerHTML = "Longitug: " + location.lng;
-                myFirebaseRef.update({
+                myFirebaseRef.push({
                   "latitud": location.lat,
                   "longitud": location.lng
                 })
