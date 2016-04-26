@@ -68,20 +68,19 @@
 
             function updateUserLoc(position) {
                 var distance = '';
-                if (localStorage.getItem("latitud") != undefined){
-                  var locationAnterior = location;
-                  distance = getDistance(
-                    locationAnterior.lat,
-                    locationAnterior.lng,
-                    location.lat,
-                    location.lng
-                  );
-                }
-
                 var location = {
                    lat : position.coords.latitude,
                    lng : position.coords.longitude
                 };
+                // Si hay una latitud y longitud anteriores se toman los valores y se calcula la distancia
+                if (localStorage.getItem("latitud") != undefined){
+                  distance = getDistance(
+                    localStorage.getItem("latitud"),
+                    localStorage.getItem("latitud"),
+                    location.lat,
+                    location.lng
+                  );
+                }
 
                 localStorage.setItem("latitud",location.lat);
                 localStorage.setItem("longitud",location.lng);
