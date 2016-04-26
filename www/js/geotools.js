@@ -1,10 +1,8 @@
 /**
-* Prototype para pasar a Radianes
+* para pasar a Radianes
 */
-if(typeof Number.prototype.toRadians == 'undefined'){
- Number.prototype.toRadians = function() {
+function toRadians(numero) {
   return this * Math.PI / 180;
- }
 }
 /**
 * Funcion para calcular la distancia entre dos puntos.
@@ -16,10 +14,10 @@ if(typeof Number.prototype.toRadians == 'undefined'){
 */
 function getDistance(lat1, lon1, lat2, lon2){
   var R = 6371; // Radio del planeta tierra en km
-  var phi1 = lat1.toRadians();
-  var phi2 = lat2.toRadians();
-  var deltaphi = (lat2-lat1).toRadians();
-  var deltalambda = (lon2-lon1).toRadians();
+  var phi1 = toRadians(lat1);
+  var phi2 = toRadians(lat2);
+  var deltaphi = toRadians(lat2-lat1);
+  var deltalambda = toRadians(lon2-lon1);
 
   var a = Math.sin(deltaphi/2) * Math.sin(deltaphi/2) +
   Math.cos(phi1) * Math.cos(phi2) *
