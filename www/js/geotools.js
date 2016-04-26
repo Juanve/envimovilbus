@@ -2,7 +2,7 @@
 * para pasar a Radianes
 */
 function toRadians(numero) {
-  return this * Math.PI / 180;
+  return numero * Math.PI / 180;
 }
 /**
 * Funcion para calcular la distancia entre dos puntos.
