@@ -39,10 +39,12 @@
                 <p class="event received">Dispositivo Listo</p>
                 <p id="latitud">Obteniendo</p>
                 <p id="longitud">Coordenadas GPS...</p>
+                <p id="distancia"></p>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/geotools.js"></script>
         <script type="text/javascript">
             app.initialize();
             // Set Firebase
@@ -65,16 +67,26 @@
             // do something with the results
 
             function updateUserLoc(position) {
+                if (location != undefined){
+                  var locationAnterior = location;
+                }
                 var location = {
                    lat : position.coords.latitude,
                    lng : position.coords.longitude
                 };
-
-                var latitudp = document.getElementById("latitud")
+                var distance = getDistance(
+                  locationAnterior.lat,
+                  locationAnterior.lng,
+                  location.lat,
+                  location.lng
+                );
+                var latitudp = document.getElementById("latitud");
                 latitudp.innerHTML = "Latitud: " + location.lat;
-                var longitudp = document.getElementById("longitud")
+                var longitudp = document.getElementById("longitud");
                 longitudp.innerHTML = "Longitug: " + location.lng;
-                myFirebaseRef.push({
+                var distancep = document.getElementById("distance");
+                distancep.innerHTML = "Distancia: " + distance;
+                myFirebaseRef.update({
                   "latitud": location.lat,
                   "longitud": location.lng
                 })
