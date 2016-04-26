@@ -68,7 +68,7 @@
 
             function updateUserLoc(position) {
                 var distance = '';
-                if (location != undefined){
+                if (localStorage.getItem("latitud") != undefined){
                   var locationAnterior = location;
                   distance = getDistance(
                     locationAnterior.lat,
@@ -77,10 +77,14 @@
                     location.lng
                   );
                 }
+
                 var location = {
                    lat : position.coords.latitude,
                    lng : position.coords.longitude
                 };
+
+                localStorage.setItem("latitud",location.lat);
+                localStorage.setItem("longitud",location.lng);
 
                 var latitudp = document.getElementById("latitud");
                 latitudp.innerHTML = "Latitud: " + location.lat;
