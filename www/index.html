@@ -40,6 +40,8 @@
                 <p id="latitud">Obteniendo</p>
                 <p id="longitud">Coordenadas GPS...</p>
                 <p id="distancia"></p>
+                <button onclick="setNewTracking()">New Tracking</button>
+                <button>Set Point</button>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -49,6 +51,10 @@
             app.initialize();
             // Set Firebase
             var myFirebaseRef = new Firebase("https://envimovilgps.firebaseio.com/");
+            // Set new tracking
+            function setNewTracking(){
+                myFirebaseRef.set("tracking");
+            }
             // sets up the interval at the specified frequency
             function setupWatch(freq) {
                 // global var here so it can be cleared on logout (or whenever).
