@@ -41,7 +41,7 @@
                 <p id="longitud">Coordenadas GPS...</p>
                 <p id="distancia"></p>
                 <button onclick="resetTracking()">Reset Tracking</button>
-                <button onclick="setPoint()">Get Point</button>
+                <button onclick="addPoint()">Get Point</button>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -57,7 +57,7 @@
                 trackingFB.set(null);
             }
             // Push new gps point in tracking from last local stored coordinates
-            function pushPoint(){
+            function addPoint(){
                 trackingFB.push({
                   latitud:localStorage.getItem("latitud"),
                   longitud:localStorage.getItem("longitud")
