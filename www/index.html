@@ -40,8 +40,8 @@
                 <p id="latitud">Obteniendo</p>
                 <p id="longitud">Coordenadas GPS...</p>
                 <p id="distancia"></p>
-                <button onclick="setNewTracking()">New Tracking</button>
-                <button>Set Point</button>
+                <button onclick="resetTracking()">Reset Tracking</button>
+                <button onclick="setPoint()">Get Point</button>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -50,11 +50,21 @@
         <script type="text/javascript">
             app.initialize();
             // Set Firebase
-            var myFirebaseRef = new Firebase("https://envimovilgps.firebaseio.com/");
-            // Set new tracking
-            function setNewTracking(){
-                myFirebaseRef.set("tracking");
+            var gpsLocationFB = new Firebase("https://envimovilgps.firebaseio.com/web/data/gpsLocation");
+            var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/web/data/tracking");
+            // reset tracking
+            function resetTracking(){
+                trackingFB.set(null);
             }
+            // Push new gps point in tracking from last local stored coordinates
+            function pushPoint(){
+                trackingFB.push({
+                  latitud:localStorage.getItem("latitud"),
+                  longitud:localStorage.getItem("longitud")
+                })
+            }
+
+            /**** Get Actual Position ***/
             // sets up the interval at the specified frequency
             function setupWatch(freq) {
                 // global var here so it can be cleared on logout (or whenever).
@@ -82,7 +92,7 @@
                 if (localStorage.getItem("latitud") != undefined){
                   distance = getDistance(
                     localStorage.getItem("latitud"),
-                    localStorage.getItem("latitud"),
+                    localStorage.getItem("longitud"),
                     location.lat,
                     location.lng
                   );
@@ -97,7 +107,7 @@
                 longitudp.innerHTML = "Longitug: " + location.lng;
                 var distancep = document.getElementById("distancia");
                 distancep.innerHTML = "Distancia: " + distance;
-                myFirebaseRef.update({
+                gpsLocationFB.update({
                   "latitud": location.lat,
                   "longitud": location.lng
                 })
