@@ -56,7 +56,6 @@
             } else {
               var deviceuuid = "nouuid";
             }
-            var gpsLocationFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/gpsLocation");
             var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/tracking");
             // reset tracking
             function resetTracking(){
@@ -89,7 +88,8 @@
             // do something with the results
 
             function updateUserLoc(position) {
-                var distance = '';
+              var gpsLocationFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/gpsLocation");
+              var distance = '';
                 var location = {
                    lat : position.coords.latitude,
                    lng : position.coords.longitude
