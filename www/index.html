@@ -33,6 +33,7 @@
     </head>
     <body>
         <div class="app">
+            <div id="deviceinfo">
             <h1>Envimovil GPS</h1>
             <div id="deviceready" class="blink">
                 <p class="event listening">Conectando al Dispositivo...</p>
@@ -50,8 +51,13 @@
         <script type="text/javascript">
             app.initialize();
             // Set Firebase
-            var gpsLocationFB = new Firebase("https://envimovilgps.firebaseio.com/web/data/gpsLocation");
-            var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/web/data/tracking");
+            if (localStorage.getItem("deviceuuid") != undefined){
+              var deviceuuid = localStorage.getItem("deviceuuid");
+            } else {
+              var deviceuuid = "nouuid";
+            }
+            var gpsLocationFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/gpsLocation");
+            var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/tracking");
             // reset tracking
             function resetTracking(){
                 trackingFB.set(null);

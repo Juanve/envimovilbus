@@ -27,6 +27,7 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        localStorage.setItem("deviceuuid",device.uuid);
     },
     // deviceready Event Handler
     //
