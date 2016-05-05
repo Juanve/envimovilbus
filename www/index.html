@@ -39,7 +39,7 @@
                 <p class="event received">Dispositivo Listo</p>
                 <p id="latitud">Obteniendo</p>
                 <p id="longitud">Coordenadas GPS...</p>
-                <p id="distancia"></p>
+                <!-- <p id="distancia"></p>-->
                 <button onclick="resetTracking()">Reset Tracking</button>
                 <button onclick="addPoint()">Get Point</button>
             </div>
@@ -106,7 +106,7 @@
                 var longitudp = document.getElementById("longitud");
                 longitudp.innerHTML = "Longitug: " + location.lng;
                 var distancep = document.getElementById("distancia");
-                distancep.innerHTML = "Distancia: " + distance;
+                // distancep.innerHTML = "Distancia: " + distance;
                 gpsLocationFB.update({
                   "latitud": location.lat,
                   "longitud": location.lng
