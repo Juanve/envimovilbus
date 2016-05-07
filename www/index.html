@@ -43,6 +43,9 @@
                 <!-- <p id="distancia"></p>-->
                 <button onclick="resetTracking()">Reset Tracking</button>
                 <button onclick="addPoint()">Get Point</button>
+                <p>Placa</p>
+                <input id="inputPlaca"></input>
+                <button onclick="updatePlaca()"></button>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -50,12 +53,20 @@
         <script type="text/javascript" src="js/geotools.js"></script>
         <script type="text/javascript">
             app.initialize();
-            // Set Firebase
+            // Init Values
             if (localStorage.getItem("deviceuuid") != undefined){
               var deviceuuid = localStorage.getItem("deviceuuid");
             } else {
               var deviceuuid = "nouuid";
             }
+            if (localStorage.getItem("placa") != undefined){
+              var placaLocal = localStorage.getItem("placa");
+            } else {
+              var placaLocal = "";
+            }
+            var placaInput = document.getElementById("inputPlaca");
+            placaInput.innerHtml = placaLocal;
+            
             var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/tracking");
             // reset tracking
             function resetTracking(){
@@ -66,6 +77,16 @@
                 trackingFB.push({
                   latitud:localStorage.getItem("latitud"),
                   longitud:localStorage.getItem("longitud")
+                })
+            }
+            
+            /**** Update Placa *****/
+            var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
+            function updatePlaca(){
+                var placaValue = placaInput.innerHTML;
+                localStorage.setItem("placa",placaValue);
+                detailsFB.update({
+                  placa: placaValue
                 })
             }
 
