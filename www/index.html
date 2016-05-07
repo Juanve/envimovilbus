@@ -59,14 +59,7 @@
             } else {
               var deviceuuid = "nouuid";
             }
-            if (localStorage.getItem("placa") != undefined){
-              var placaLocal = localStorage.getItem("placa");
-            } else {
-              var placaLocal = "";
-            }
-            var placaInput = document.getElementById("inputPlaca");
-            placaInput.innerHTML = placaLocal;
-            
+            /**** Get Tracking Points ****/
             var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/tracking");
             // reset tracking
             function resetTracking(){
@@ -79,15 +72,15 @@
                   longitud:localStorage.getItem("longitud")
                 })
             }
-            
-            /**** Update Placa *****/
-            var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
+
+            /**** Update Details *****/
+            /*var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
             function updatePlaca(){
-                localStorage.setItem("placa",placaInput.value);
+                localStorage.setItem("placa",inputPlaca.value);
                 detailsFB.update({
-                  placa: placaInput.value
+                  placa: inputPlaca.value
                 })
-            }
+            }*/
 
             /**** Get Actual Position ***/
             // sets up the interval at the specified frequency
@@ -151,6 +144,28 @@
                 clearInterval(activeWatch);
             }
             setupWatch(3000);
+
+            // ONLOAD
+
+            window.onload = function(){
+              // Firebase items
+              var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
+              //get elements
+              var inputPlaca = document.getElementById("inputPlaca");
+              //input changed event
+              inputPlaca.oninput = function(){
+                localStorage.setItem("placa",inputPlaca.value);
+                detailsFB.update({
+                  placa: inputPlaca.value
+                })
+              };
+              if (localStorage.getItem("placa") != undefined){
+                var placaLocal = localStorage.getItem("placa");
+              } else {
+                var placaLocal = "";
+              }
+              inputPlaca.innerHTML = placaLocal;
+            };
         </script>
     </body>
 </html>
