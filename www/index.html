@@ -65,7 +65,7 @@
               var placaLocal = "";
             }
             var placaInput = document.getElementById("inputPlaca");
-            placaInput.innerHtml = placaLocal;
+            placaInput.innerHTML = placaLocal;
             
             var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/tracking");
             // reset tracking
@@ -83,10 +83,9 @@
             /**** Update Placa *****/
             var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
             function updatePlaca(){
-                var placaValue = placaInput.innerHTML;
-                localStorage.setItem("placa",placaValue);
+                localStorage.setItem("placa",placaInput.value);
                 detailsFB.update({
-                  placa: placaValue
+                  placa: placaInput.value
                 })
             }
 
