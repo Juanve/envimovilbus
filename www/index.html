@@ -45,7 +45,7 @@
                 <button onclick="addPoint()">Get Point</button>
                 <p>Placa</p>
                 <input id="inputPlaca"></input><br/>
-                <button onclick="updatePlaca()">Grabar</button>
+                <button id="botonEditar">Editar</button>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -72,15 +72,6 @@
                   longitud:localStorage.getItem("longitud")
                 })
             }
-
-            /**** Update Details *****/
-            /*var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
-            function updatePlaca(){
-                localStorage.setItem("placa",inputPlaca.value);
-                detailsFB.update({
-                  placa: inputPlaca.value
-                })
-            }*/
 
             /**** Get Actual Position ***/
             // sets up the interval at the specified frequency
@@ -148,12 +139,13 @@
             // ONLOAD
 
             window.onload = function(){
-              // Firebase items
+              // Firebase links
               var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
-              //get elements
+              //++ input Placa ++//
               var inputPlaca = document.getElementById("inputPlaca");
-              //input changed event
+              // oninput event
               inputPlaca.oninput = function(){
+                // FALTA: Validar el formato del dato
                 localStorage.setItem("placa",inputPlaca.value);
                 detailsFB.update({
                   placa: inputPlaca.value
@@ -165,6 +157,19 @@
                 var placaLocal = "";
               }
               inputPlaca.innerHTML = placaLocal;
+              // Este input arranca deshabilitado
+              inputPlaca.disabled = true;
+              //++ Boton Editar ++//
+              var botonEditar = document.getElementById("botonEditar");
+              botonEditar.onclick = function(){
+                if (inputPlaca.disabled){
+                  inputPlaca.disabled = false;
+                  this.value = "Grabar"
+                } else {
+                  inputPlaca.disabled = true;
+                  this.value = "Editar"
+                }
+              };
             };
         </script>
     </body>
