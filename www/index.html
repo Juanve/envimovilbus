@@ -40,7 +40,7 @@
               var deviceuuid = "nouuid";
             }
             /**** Get Tracking Points ****/
-            var trackingFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/tracking");
+            var trackingFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/tracking");
             // reset tracking
             function resetTracking(){
                 trackingFB.set(null);
@@ -72,7 +72,7 @@
             // do something with the results
 
             function updateUserLoc(position) {
-              var gpsLocationFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/gpsLocation");
+              var gpsLocationFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/gpsLocation");
               var distance = '';
                 var location = {
                    lat : position.coords.latitude,
@@ -120,7 +120,7 @@
 
             window.onload = function(){
               // Firebase links
-              var detailsFB = new Firebase("https://envimovilgps.firebaseio.com/moviles/" + deviceuuid + "/details");
+              var detailsFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/details");
               //++ input Placa ++//
               var inputPlaca = document.getElementById("inputPlaca");
               // oninput event
