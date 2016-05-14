@@ -25,6 +25,8 @@
                 <button onclick="addPoint()">Get Point</button>
                 <p>Placa</p>
                 <input id="inputPlaca"></input><br/>
+                <p>Ruta</p>
+                <input id="inputRuta"></input><br/>
                 <button id="botonEditar">Editar</button>
             </div>
         </div>
@@ -139,14 +141,34 @@
               inputPlaca.value = placaLocal;
               // Este input arranca deshabilitado
               inputPlaca.disabled = true;
+              //++ input Ruta ++//
+              var inputRuta = document.getElementById("inputRuta");
+              // oninput event
+              inputRuta.oninput = function(){
+                // FALTA: Validar el formato del dato
+                localStorage.setItem("ruta",inputRuta.value);
+                detailsFB.update({
+                  placa: inputRuta.value
+                })
+              };
+              if (localStorage.getItem("ruta") != undefined){
+                var rutaLocal = localStorage.getItem("ruta");
+              } else {
+                var rutaLocal = "";
+              }
+              inputRuta.value = rutaLocal;
+              // Este input arranca deshabilitado
+              inputRuta.disabled = true;
               //++ Boton Editar ++//
               var botonEditar = document.getElementById("botonEditar");
               botonEditar.onclick = function(){
                 if (inputPlaca.disabled){
                   inputPlaca.disabled = false;
+                  inputRuta.disabled = false;
                   botonEditar.value = "Grabar";
                 } else {
                   inputPlaca.disabled = true;
+                  inputRuta.disabled = true;
                   botonEditar.value = "Editar";
                 }
               };
