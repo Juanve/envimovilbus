@@ -69,7 +69,7 @@
     <!--
         <gap:plugin name="com.phonegap.plugins.barcodescanner" />
     -->
-
+ 
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
     <icon src="res/icon/android/icon-36-ldpi.png"   gap:platform="android"    gap:qualifier="ldpi" />
@@ -120,6 +120,7 @@
     <!-- Added the following intents to support the removal of whitelist code from base cordova to a plugin -->
     <!-- Whitelist configuration. Refer to https://cordova.apache.org/docs/en/edge/guide_appdev_whitelist_index.md.html -->
     <plugin name="cordova-plugin-whitelist" version="1" />
+    <plugin name="eu.mobilion.ibeacon" spec="0.0.0" source="pgb" />
     <allow-navigation href="*"/>
     <allow-intent href="*" />
     <!-- <allow-intent href="https://*/*" />
