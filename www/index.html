@@ -28,8 +28,10 @@
                 <p>Ruta</p>
                 <input id="inputRuta"></input><br/>
                 <button id="botonEditar">Editar</button>
-                <p>Paraderos:</p>
-                <p id="paraderos"></p>
+                <p>Estacion Salida:</p>
+                <p id="estacionSalida"></p>
+                <p>Estacion Llegada:</p>
+                <p id="estacionLlegada"></p> 
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -175,41 +177,6 @@
                 }
               };
             };
-            var beaconsFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/beacons");
-            var paraderos = new ibeacon.Region({
-              uuid: '74278bda-b644-4520-8f0c-720eaf050001'
-            });
-
-            ibeacon.startRangingBeaconsInRegion({
-              region: paraderos,
-              didRangeBeacons: function(result) {
-                if (result.beacons.length > 0){
-                  var beacons = result.beacons;
-                  var cantidadparaderos = beacons.length;
-                  var timestamp = (new Date).getTime();
-                  for (var i = 0, len = beacons.length; i < len; i++){
-                    beacons[i].timestamp = timestamp;
-                    // Se reindexa con el major id
-                    var beaconMajor = beacons[i].major;
-                    // Se actualiza en FB
-                    if (beaconsFB.child(beaconMajor)){
-                      beaconsFB.child(beaconMajor).update(beacons[i]);
-                    } else {
-                      beaconsFB.child(beaconMajor).set(beacons[i]);
-                    }
-                    beacons[beaconMajor] = beacons[i];
-                    delete beacons[i];
-                  }
-                  $("#paraderos").html(cantidadparaderos);
-                  localStorage.setItem("beaconsCount",cantidadparaderos);
-                  localStorage.setItem("beacons",JSON.stringify(beacons));
-                  // Update beacons in FB
-                  //beaconsFB.set(beacons);
-                } else {
-                  $("#paraderos").html('Ninguno Cercano');
-                }
-              }
-            });
         </script>
     </body>
 </html>
