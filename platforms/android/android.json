@@ -1,0 +1,78 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"IBeaconPlugin\"><param name=\"android-package\" value=\"eu.mobilion.ibeacon.IBeaconPlugin\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/manifest": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
+                            "count": 1
+                        }
+                    ],
+                    "/manifest/application": [
+                        {
+                            "xml": "<service android:name=\"com.radiusnetworks.ibeacon.service.IBeaconService\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<service android:name=\"com.radiusnetworks.ibeacon.IBeaconIntentProcessor\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "eu.mobilion.ibeacon": {
+            "PACKAGE_NAME": "me.misideas.envimovilbus"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "file": "plugins/eu.mobilion.ibeacon/www/ibeacon.js",
+            "id": "eu.mobilion.ibeacon.ibeacon",
+            "clobbers": [
+                "ibeacon"
+            ]
+        },
+        {
+            "file": "plugins/eu.mobilion.ibeacon/www/region.js",
+            "id": "eu.mobilion.ibeacon.region"
+        },
+        {
+            "file": "plugins/eu.mobilion.ibeacon/www/beacon.js",
+            "id": "eu.mobilion.ibeacon.beacon"
+        },
+        {
+            "file": "plugins/eu.mobilion.ibeacon/www/helper.js",
+            "id": "eu.mobilion.ibeacon.helper"
+        },
+        {
+            "file": "plugins/eu.mobilion.ibeacon/www/defaults.js",
+            "id": "eu.mobilion.ibeacon.defaults"
+        }
+    ],
+    "plugin_metadata": {
+        "eu.mobilion.ibeacon": "0.0.0"
+    }
+}

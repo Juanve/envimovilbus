@@ -10,6 +10,10 @@
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Envimovil GPS</title>
         <script src="js/firebase.js"></script>
+        <script src="js/geofire.min.js"></script>
+        <style type="text/css">
+          #inputRuta,#labelRuta {display: none;}
+        </style>
     </head>
     <body>
         <div class="app">
@@ -20,18 +24,19 @@
                 <p class="event received">Dispositivo Listo</p>
                 <p id="latitud">Obteniendo</p>
                 <p id="longitud">Coordenadas GPS...</p>
-                <!-- <p id="distancia"></p>-->
-                <button onclick="resetTracking()">Reset Tracking</button>
-                <button onclick="addPoint()">Get Point</button>
+                Lat:<input id="inputLatitud" type="text" name=""/><br/>
+                Lng:<input id="inputLongitud" type="text" name=""/><br/>
+                Radio:<input id="inputRadio" type="text" name=""/><br/>
+                <button id="botonUpdateGeoQuery">Update GeoQuery</button>
                 <p>Placa</p>
                 <input id="inputPlaca"></input><br/>
-                <p>Ruta</p>
+                <p id="labelRuta">Ruta</p>
                 <input id="inputRuta"></input><br/>
                 <button id="botonEditar">Editar</button>
-                <p>Estacion Salida:</p>
-                <p id="estacionSalida"></p>
-                <p>Estacion Llegada:</p>
-                <p id="estacionLlegada"></p> 
+                <p>Estado: <span id="geoFireEvent"></span></p>
+                <p>Parada: <span id="geoFireStation"></span></p>
+                <p>Lugar: <span id="geoFireLocation"></span></p>
+                <p>Distancia: <span id="geoFireDistance"></span></p>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
@@ -39,92 +44,16 @@
         <script type="text/javascript" src="js/geotools.js"></script>
         <script type="text/javascript">
             app.initialize();
-            // Init Values
-            if (localStorage.getItem("deviceuuid") != undefined){
-              var deviceuuid = localStorage.getItem("deviceuuid");
-            } else {
-              var deviceuuid = "nouuid";
-            }
-            /**** Get Tracking Points ****/
-            var trackingFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/tracking");
-            // reset tracking
-            function resetTracking(){
-                trackingFB.set(null);
-            }
-            // Push new gps point in tracking from last local stored coordinates
-            function addPoint(){
-                trackingFB.push({
-                  latitud:localStorage.getItem("latitud"),
-                  longitud:localStorage.getItem("longitud")
-                })
-            }
-
-            /**** Get Actual Position ***/
-            // sets up the interval at the specified frequency
-            function setupWatch(freq) {
-                // global var here so it can be cleared on logout (or whenever).
-                activeWatch = setInterval(watchLocation, freq);
-            }
-
-            // this is what gets called on the interval.
-            function watchLocation() {
-                var gcp = navigator.geolocation.getCurrentPosition(
-                        updateUserLoc, onLocationError, {
-                            enableHighAccuracy: true
-                        });
-                //console.log(gcp);
-            }
-
-            // do something with the results
-
-            function updateUserLoc(position) {
-              var gpsLocationFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/gpsLocation");
-              var distance = '';
-                var location = {
-                   lat : position.coords.latitude,
-                   lng : position.coords.longitude
-                };
-                // Si hay una latitud y longitud anteriores se toman los valores y se calcula la distancia
-                if (localStorage.getItem("latitud") != undefined){
-                  distance = getDistance(
-                    localStorage.getItem("latitud"),
-                    localStorage.getItem("longitud"),
-                    location.lat,
-                    location.lng
-                  );
-                }
-
-                localStorage.setItem("latitud",location.lat);
-                localStorage.setItem("longitud",location.lng);
-
-                var latitudp = document.getElementById("latitud");
-                latitudp.innerHTML = "Latitud: " + location.lat;
-                var longitudp = document.getElementById("longitud");
-                longitudp.innerHTML = "Longitug: " + location.lng;
-                var distancep = document.getElementById("distancia");
-                // distancep.innerHTML = "Distancia: " + distance;
-                gpsLocationFB.update({
-                  "latitud": location.lat,
-                  "longitud": location.lng
-                })
-            }
-
-            // Cuando hay un error en watchLocation lo muestra y deja de obtener coordenadas
-
-            function onLocationError(e) {
-                alert(e.message);
-                logout();
-            }
-            // stop watching
-
-            function logout() {
-                clearInterval(activeWatch);
-            }
-            setupWatch(3000);
-
+            
             // ONLOAD
 
             window.onload = function(){
+              // Init Values
+              if (localStorage.getItem("deviceuuid") != undefined){
+                var deviceuuid = localStorage.getItem("deviceuuid");
+              } else {
+                var deviceuuid = "nouuid";
+              }
               // Firebase links
               var detailsFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/details");
               //++ input Placa ++//
@@ -176,7 +105,129 @@
                   botonEditar.value = "Editar";
                 }
               };
-            };
+              var gpsLocationFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/gpsLocation");
+              var geoFire = new GeoFire(gpsLocationFB);
+              var geoQuery = geoFire.query({
+                center: [6.0634196, -75.5054149],
+                radius: 0.05
+              });
+              //++ Boton Update GeoQuery ++//
+              var botonUpdateGeoQuery = document.getElementById("botonUpdateGeoQuery");
+              botonUpdateGeoQuery.onclick = function(){
+                var inputRadio = document.getElementById("inputRadio");
+                var inputLatitud = document.getElementById("inputLatitud");
+                var inputLongitud = document.getElementById("inputLongitud");
+                geoQuery.updateCriteria({
+                  center: [inputLatitud,inputLongitud],
+                  radius: inputRadio
+                });
+              };
+              var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+                var geoFireEvent = document.getElementById("geoFireEvent");
+                geoFireEvent.innerHTML = "Aproximacion";
+                var geoFireStation = document.getElementById("geoFireStation");
+                geoFireStation.innerHTML = "City Plaza";
+                var geoFireLocation = document.getElementById("geoFireLocation");
+                geoFireLocation.innerHTML = location;
+                var geoFireDistance = document.getElementById("geoFireDistance");
+                geoFireDistance.innerHTML = distance;
+                //console.log(key + " entered query at " + location + " (" + distance + " km from center)");
+              });
+              var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+                var geoFireEvent = document.getElementById("geoFireEvent");
+                geoFireEvent.innerHTML = "Sale de Paradero";
+                var geoFireStation = document.getElementById("geoFireStation");
+                geoFireStation.innerHTML = "City Plaza";
+                var geoFireLocation = document.getElementById("geoFireLocation");
+                geoFireLocation.innerHTML = location;
+                var geoFireDistance = document.getElementById("geoFireDistance");
+                geoFireDistance.innerHTML = distance;
+                //console.log(key + " exited query to " + location + " (" + distance + " km from center)");
+              });
+              var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
+                var geoFireEvent = document.getElementById("geoFireEvent");
+                // si la distancia es menor de 15 metros se considera que esta en la parada
+                if (distance <= 0.010){
+                  geoFireEvent.innerHTML = "En el Paradero";
+                } else {
+                  geoFireEvent.innerHTML = "Cerca al Paradero";
+                }
+                var geoFireStation = document.getElementById("geoFireStation");
+                geoFireStation.innerHTML = "City Plaza";
+                var geoFireLocation = document.getElementById("geoFireLocation");
+                geoFireLocation.innerHTML = location;
+                var geoFireDistance = document.getElementById("geoFireDistance");
+                geoFireDistance.innerHTML = distance;
+                //console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
+              });
+              /**** Get Tracking Points ****/
+              var trackingFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/tracking");
+              // reset tracking
+              function resetTracking(){
+                  trackingFB.set(null);
+              }
+              // Push new gps point in tracking from last local stored coordinates
+              function addPoint(){
+                  trackingFB.push({
+                    latitud:localStorage.getItem("latitud"),
+                    longitud:localStorage.getItem("longitud")
+                  })
+              }
+  
+              /**** Get Actual Position ***/
+              // sets up the interval at the specified frequency
+              function setupWatch(freq) {
+                  // global var here so it can be cleared on logout (or whenever).
+                  activeWatch = setInterval(watchLocation, freq);
+              }
+  
+              // this is what gets called on the interval.
+              function watchLocation() {
+                  var gcp = navigator.geolocation.getCurrentPosition(
+                          updateUserLoc, onLocationError, {
+                              enableHighAccuracy: true
+                          });
+                  //console.log(gcp);
+              }
+  
+              // do something with the results
+  
+              function updateUserLoc(position) {
+                  var gpsLocationFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/gpsLocation");
+                  var location = {
+                     lat : position.coords.latitude,
+                     lng : position.coords.longitude
+                  };
+  
+                  localStorage.setItem("latitud",location.lat);
+                  localStorage.setItem("longitud",location.lng);
+  
+                  var latitudp = document.getElementById("latitud");
+                  latitudp.innerHTML = "Latitud: " + location.lat;
+                  var longitudp = document.getElementById("longitud");
+                  longitudp.innerHTML = "Longitug: " + location.lng;
+                  gpsLocationFB.update({
+                    "latitud": location.lat,
+                    "longitud": location.lng
+                  })
+                  // Set GeoPoint de la siguiente estacion
+                  geoFire.set("geoPoint",[location.lat, location.lng]);
+              }
+  
+              // Cuando hay un error en watchLocation lo muestra y deja de obtener coordenadas
+  
+              function onLocationError(e) {
+                  alert(e.message);
+                  logout();
+              }
+              // stop watching
+  
+              function logout() {
+                  clearInterval(activeWatch);
+              }
+              setupWatch(3000);
+
+            }; //onload
         </script>
     </body>
 </html>
