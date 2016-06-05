@@ -9,8 +9,15 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Envimovil GPS</title>
+        <script src="js/yconsole.js"></script>
+        <script type="text/javascript" >
+          YConsole.SPLITTER_WIDTH=16;
+      		YConsole.show();
+       </script>
+        <script src="js/jquery-1.11.3.min.js"></script>
         <script src="js/firebase.js"></script>
         <script src="js/geofire.min.js"></script>
+        <script src="js/envimovilbus.js"></script>
         <style type="text/css">
           #inputRuta,#labelRuta {display: none;}
         </style>
@@ -22,12 +29,15 @@
             <div id="deviceready" class="blink">
                 <p class="event listening">Conectando al Dispositivo...</p>
                 <p class="event received">Dispositivo Listo</p>
-                <p id="latitud">Obteniendo</p>
-                <p id="longitud">Coordenadas GPS...</p>
+                Latitud:<span id="latitud">Obteniendo</span><br/>
+                Longitud: <span id="longitud">Coordenadas GPS...</span><br/>
+                <button id="botonSetGpsValues">Set Gps Values</button><br/>
                 Lat:<input id="inputLatitud" type="text" name=""/><br/>
                 Lng:<input id="inputLongitud" type="text" name=""/><br/>
                 Radio:<input id="inputRadio" type="text" name=""/><br/>
-                <button id="botonUpdateGeoQuery">Update GeoQuery</button>
+                <button id="botonUpdateGeoQuery1">GeoQuery1</button>
+                <button id="botonUpdateGeoQuery2">GeoQuery2</button>
+                <button id="botonUpdateGeoQuery3">GeoQuery3</button>
                 <p>Placa</p>
                 <input id="inputPlaca"></input><br/>
                 <p id="labelRuta">Ruta</p>
@@ -37,197 +47,15 @@
                 <p>Parada: <span id="geoFireStation"></span></p>
                 <p>Lugar: <span id="geoFireLocation"></span></p>
                 <p>Distancia: <span id="geoFireDistance"></span></p>
+                <button id="botonSetTime1">SetTime1</button>
+                <button id="botonSetTime2">SetTime2</button>
+                <button id="botonSetTime3">SetTime3</button>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript" src="js/geotools.js"></script>
         <script type="text/javascript">
             app.initialize();
-            
-            // ONLOAD
-
-            window.onload = function(){
-              // Init Values
-              if (localStorage.getItem("deviceuuid") != undefined){
-                var deviceuuid = localStorage.getItem("deviceuuid");
-              } else {
-                var deviceuuid = "nouuid";
-              }
-              // Firebase links
-              var detailsFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/details");
-              //++ input Placa ++//
-              var inputPlaca = document.getElementById("inputPlaca");
-              // oninput event
-              inputPlaca.oninput = function(){
-                // FALTA: Validar el formato del dato
-                localStorage.setItem("placa",inputPlaca.value);
-                detailsFB.update({
-                  placa: inputPlaca.value
-                })
-              };
-              if (localStorage.getItem("placa") != undefined){
-                var placaLocal = localStorage.getItem("placa");
-              } else {
-                var placaLocal = "";
-              }
-              inputPlaca.value = placaLocal;
-              // Este input arranca deshabilitado
-              inputPlaca.disabled = true;
-              //++ input Ruta ++//
-              var inputRuta = document.getElementById("inputRuta");
-              // oninput event
-              inputRuta.oninput = function(){
-                // FALTA: Validar el formato del dato
-                localStorage.setItem("ruta",inputRuta.value);
-                detailsFB.update({
-                  ruta: inputRuta.value
-                })
-              };
-              if (localStorage.getItem("ruta") != undefined){
-                var rutaLocal = localStorage.getItem("ruta");
-              } else {
-                var rutaLocal = "";
-              }
-              inputRuta.value = rutaLocal;
-              // Este input arranca deshabilitado
-              inputRuta.disabled = true;
-              //++ Boton Editar ++//
-              var botonEditar = document.getElementById("botonEditar");
-              botonEditar.onclick = function(){
-                if (inputPlaca.disabled){
-                  inputPlaca.disabled = false;
-                  inputRuta.disabled = false;
-                  botonEditar.value = "Grabar";
-                } else {
-                  inputPlaca.disabled = true;
-                  inputRuta.disabled = true;
-                  botonEditar.value = "Editar";
-                }
-              };
-              var gpsLocationFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/gpsLocation");
-              var geoFire = new GeoFire(gpsLocationFB);
-              var geoQuery = geoFire.query({
-                center: [6.0634196, -75.5054149],
-                radius: 0.05
-              });
-              //++ Boton Update GeoQuery ++//
-              var botonUpdateGeoQuery = document.getElementById("botonUpdateGeoQuery");
-              botonUpdateGeoQuery.onclick = function(){
-                var inputRadio = document.getElementById("inputRadio");
-                var inputLatitud = document.getElementById("inputLatitud");
-                var inputLongitud = document.getElementById("inputLongitud");
-                geoQuery.updateCriteria({
-                  center: [inputLatitud,inputLongitud],
-                  radius: inputRadio
-                });
-              };
-              var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
-                var geoFireEvent = document.getElementById("geoFireEvent");
-                geoFireEvent.innerHTML = "Aproximacion";
-                var geoFireStation = document.getElementById("geoFireStation");
-                geoFireStation.innerHTML = "City Plaza";
-                var geoFireLocation = document.getElementById("geoFireLocation");
-                geoFireLocation.innerHTML = location;
-                var geoFireDistance = document.getElementById("geoFireDistance");
-                geoFireDistance.innerHTML = distance;
-                //console.log(key + " entered query at " + location + " (" + distance + " km from center)");
-              });
-              var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
-                var geoFireEvent = document.getElementById("geoFireEvent");
-                geoFireEvent.innerHTML = "Sale de Paradero";
-                var geoFireStation = document.getElementById("geoFireStation");
-                geoFireStation.innerHTML = "City Plaza";
-                var geoFireLocation = document.getElementById("geoFireLocation");
-                geoFireLocation.innerHTML = location;
-                var geoFireDistance = document.getElementById("geoFireDistance");
-                geoFireDistance.innerHTML = distance;
-                //console.log(key + " exited query to " + location + " (" + distance + " km from center)");
-              });
-              var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
-                var geoFireEvent = document.getElementById("geoFireEvent");
-                // si la distancia es menor de 15 metros se considera que esta en la parada
-                if (distance <= 0.010){
-                  geoFireEvent.innerHTML = "En el Paradero";
-                } else {
-                  geoFireEvent.innerHTML = "Cerca al Paradero";
-                }
-                var geoFireStation = document.getElementById("geoFireStation");
-                geoFireStation.innerHTML = "City Plaza";
-                var geoFireLocation = document.getElementById("geoFireLocation");
-                geoFireLocation.innerHTML = location;
-                var geoFireDistance = document.getElementById("geoFireDistance");
-                geoFireDistance.innerHTML = distance;
-                //console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
-              });
-              /**** Get Tracking Points ****/
-              var trackingFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/tracking");
-              // reset tracking
-              function resetTracking(){
-                  trackingFB.set(null);
-              }
-              // Push new gps point in tracking from last local stored coordinates
-              function addPoint(){
-                  trackingFB.push({
-                    latitud:localStorage.getItem("latitud"),
-                    longitud:localStorage.getItem("longitud")
-                  })
-              }
-  
-              /**** Get Actual Position ***/
-              // sets up the interval at the specified frequency
-              function setupWatch(freq) {
-                  // global var here so it can be cleared on logout (or whenever).
-                  activeWatch = setInterval(watchLocation, freq);
-              }
-  
-              // this is what gets called on the interval.
-              function watchLocation() {
-                  var gcp = navigator.geolocation.getCurrentPosition(
-                          updateUserLoc, onLocationError, {
-                              enableHighAccuracy: true
-                          });
-                  //console.log(gcp);
-              }
-  
-              // do something with the results
-  
-              function updateUserLoc(position) {
-                  var gpsLocationFB = new Firebase("https://envimovilcentral.firebaseio.com/equipos/" + deviceuuid + "/gpsLocation");
-                  var location = {
-                     lat : position.coords.latitude,
-                     lng : position.coords.longitude
-                  };
-  
-                  localStorage.setItem("latitud",location.lat);
-                  localStorage.setItem("longitud",location.lng);
-  
-                  var latitudp = document.getElementById("latitud");
-                  latitudp.innerHTML = "Latitud: " + location.lat;
-                  var longitudp = document.getElementById("longitud");
-                  longitudp.innerHTML = "Longitug: " + location.lng;
-                  gpsLocationFB.update({
-                    "latitud": location.lat,
-                    "longitud": location.lng
-                  })
-                  // Set GeoPoint de la siguiente estacion
-                  geoFire.set("geoPoint",[location.lat, location.lng]);
-              }
-  
-              // Cuando hay un error en watchLocation lo muestra y deja de obtener coordenadas
-  
-              function onLocationError(e) {
-                  alert(e.message);
-                  logout();
-              }
-              // stop watching
-  
-              function logout() {
-                  clearInterval(activeWatch);
-              }
-              setupWatch(3000);
-
-            }; //onload
         </script>
     </body>
 </html>

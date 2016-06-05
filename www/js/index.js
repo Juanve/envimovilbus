@@ -35,6 +35,7 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         localStorage.setItem("deviceuuid",device.uuid);
+        console.log("device uuid: "+ device.uuid);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
