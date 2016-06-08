@@ -364,6 +364,7 @@
           clearInterval(activeWatch);
       }
       setupWatch(3000);
-
+      // Se habilita insomnia para que no se apague la aplicacion
+      window.plugins.insomnia.keepAware(function(){ console.log("Success Insomnia KeepAwake")},function(){ console.log("Error Insomnia KeepAwake")});
     }; //onload
 })();
